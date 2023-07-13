@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
 import {
-  View,
-  Text,
-  TextInput,
   Button,
   StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {useNavigateBack} from '../../navigation/Navigation';
 import {updateTask} from '../../redux/actions/todoActions';
 import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
+import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {RootStackParamList, Task} from '../../redux/actions/types';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
@@ -21,29 +21,27 @@ type EditTaskScreenNavigationProp = StackNavigationProp<
   'EditTask'
 >;
 
-type EditTaskScreenRouteProp = RouteProp<RootStackParamList, 'EditTask'>;
+type EditTaskScreenRouteProp = RouteProp<ParamListBase, 'EditTask'>;
 
 type EditTaskScreenProps = {
-  navigation: EditTaskScreenNavigationProp;
-  route: EditTaskScreenRouteProp;
+  navigation: StackNavigationProp<RootStackParamList, 'EditTask'>;
+  route: RouteProp<RootStackParamList, 'EditTask'>;
+  taskId: string;
 };
 
 const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   navigation,
   route,
+  taskId,
 }: EditTaskScreenProps) => {
-  const dispatch = useDispatch();
-  const taskId = route.params.taskId;
   const task = useSelector((state: RootState) =>
-    state.tasks.tasks.find(t => t.id === taskId),
+    state.tasks.tasks.find(t => t.id === route.params.taskId),
   );
+  const dispatch = useDispatch();
   const navigateBack = useNavigateBack();
 
   const [newTitle, setNewTitle] = useState(task?.title || '');
-  const [newDueDate, setNewDueDate] = useState(
-    task?.dueDate?.toISOString() || '',
-  );
+  const [newDueDate, setNewDueDate] = useState(task?.dueDate || '');
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [newDescription, setNewDescription] = useState(task?.description || '');
 
@@ -78,14 +76,6 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     setIsDateTimePickerVisible(false);
   };
 
-  // if (!task) {
-  //   return (
-  //     <View>
-  //       <Text>Task not found</Text>
-  //     </View>
-  //   );
-  // }
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -116,14 +106,18 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   );
 };
 
+export default EditTaskScreen;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#133b45',
   },
   input: {
     width: '80%',
+    color: '#fff',
     height: 40,
     borderWidth: 1,
     borderColor: 'gray',
@@ -131,5 +125,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
-
-export default EditTaskScreen;

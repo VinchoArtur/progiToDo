@@ -15,6 +15,7 @@ import {addTask} from '../../redux/actions/todoActions';
 import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 import TaskItem from './TaskItem';
+import ProgiButton from '../elements/buttons/ProgiButton';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -56,9 +57,7 @@ const HomeScreen: React.FC = () => {
       {tasks.length === 0 ? (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.emptyStateText}>No tasks found.</Text>
-          <TouchableOpacity onPress={createFirstTask}>
-            <Text>Create Task</Text>
-          </TouchableOpacity>
+          <ProgiButton title={'Create task'} onPress={createFirstTask} />
         </View>
       ) : (
         <>
@@ -78,7 +77,7 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: '#133b45',
     padding: 10,
   },
   emptyStateContainer: {
@@ -87,8 +86,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyStateText: {
-    fontSize: 16,
+    fontSize: 24,
     marginBottom: 20,
+    color: '#fff',
   },
   taskList: {
     flexGrow: 1,
