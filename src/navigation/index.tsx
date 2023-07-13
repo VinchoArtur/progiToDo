@@ -1,6 +1,6 @@
 import React from 'react';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {setTopLevelNavigator} from './Navigation';
 import HomeScreen from '../components/screens/HomeScreen';
 import EditTaskScreen from '../components/screens/EditTaskScreen';
@@ -14,7 +14,7 @@ const MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: 'white',
+    background: '#13434f',
   },
 };
 
@@ -36,15 +36,33 @@ const Navigation: React.FC = () => {
       backgroundColor: 'transparent',
     },
     headerTintColor: '#fff',
-    headerRight: () => <ProgiButton onPress={handleExit} title={'Exit'} />,
+    headerRight: () => (
+      <ProgiButton onPress={handleExit} title={'Exit'} isDisabled={false} />
+    ),
   };
 
   const screenOptions = {
+    ...TransitionPresets.ModalPresentationIOS, // Применение анимации Modal Presentation
+    cardStyle: {backgroundColor: 'transparent'}, // Прозрачный фон
+    cardOverlayEnabled: true, // Включение наложения экранов
+    // @ts-ignore
+    cardStyleInterpolator: ({current: {progress}}) => {
+      return {
+        cardStyle: {
+          opacity: progress, // Изменение прозрачности в зависимости от прогресса анимации
+        },
+        overlayStyle: {
+          opacity: progress, // Изменение прозрачности оверлея в зависимости от прогресса анимации
+        },
+      };
+    },
     headerStyle: {
       backgroundColor: 'transparent',
     },
     headerTintColor: '#fff',
-    headerRight: () => <ProgiButton onPress={handleExit} title={'Exit'} />,
+    headerRight: () => (
+      <ProgiButton onPress={handleExit} title={'Exit'} isDisabled={false} />
+    ),
     headerBackground: () => (
       <LinearGradient
         colors={['#316267', '#13434f']}

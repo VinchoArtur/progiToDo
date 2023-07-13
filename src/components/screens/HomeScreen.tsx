@@ -1,17 +1,9 @@
 import React, {useEffect} from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
-  Button,
-} from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
+import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {Task} from '../../redux/actions/types';
 import {navigateToEditScreen} from '../../navigation/Navigation';
-import {addTask} from '../../redux/actions/todoActions';
 import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 import TaskItem from './TaskItem';
@@ -26,14 +18,7 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   const handleCreateTask = () => {
-    const newTask: Task = {
-      id: nanoid(),
-      title: 'New Task',
-      dueDate: new Date(),
-      isClosest: false,
-    };
-    dispatch(addTask(newTask));
-    navigateToEditScreen(newTask.id);
+    navigateToEditScreen(nanoid());
   };
 
   const sortedTasks = [...tasks].sort(
@@ -42,22 +27,23 @@ const HomeScreen: React.FC = () => {
   );
 
   const createFirstTask = () => {
-    const newTask: Task = {
-      id: Math.random().toString(),
-      title: 'New Task',
-      dueDate: new Date(),
-      isClosest: false,
-    };
-    dispatch(addTask(newTask));
-    navigateToEditScreen(newTask.id);
+    navigateToEditScreen(nanoid());
   };
 
   return (
     <View style={styles.container}>
       {tasks.length === 0 ? (
         <View style={styles.emptyStateContainer}>
-          <Text style={styles.emptyStateText}>No tasks found.</Text>
-          <ProgiButton title={'Create task'} onPress={createFirstTask} />
+          <Text style={styles.emptyStateText}>
+            Please Create your first task.
+          </Text>
+          <TouchableOpacity>
+            <ProgiButton
+              title={'Create task'}
+              onPress={createFirstTask}
+              isDisabled={false}
+            />
+          </TouchableOpacity>
         </View>
       ) : (
         <>

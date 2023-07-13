@@ -1,29 +1,79 @@
 import React from 'react';
-import {StyleSheet, Text, TouchableOpacity, ViewStyle} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+  Animated, TextStyle
+} from "react-native";
+
 interface IProgiButton {
   title: string;
   onPress: () => void;
-  styles?: {
-    buttonStyle: ViewStyle;
-    textStyle: ViewStyle;
+  style?: {
+    buttonStyle?: ViewStyle;
+    textStyle?: TextStyle;
   };
+  isDisabled?: boolean;
 }
+
 const ProgiButton: React.FC<IProgiButton> = ({
   title,
   onPress,
-  styles = defaultStyles,
+  style = {},
+  isDisabled,
 }) => {
+  const scaleValue = new Animated.Value(1);
+  const handlePressIn = () => {
+    if (!isDisabled) {
+      Animated.spring(scaleValue, {
+        toValue: 0.95,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const handlePressOut = () => {
+    if (!isDisabled) {
+      Animated.spring(scaleValue, {
+        toValue: 1,
+        friction: 3,
+        tension: 20,
+        useNativeDriver: true,
+      }).start();
+    }
+  };
+
+  const animatedButtonStyle = {
+    ...defaultStyles.buttonStyle,
+    ...style.buttonStyle,
+    transform: [{scale: scaleValue}],
+  };
+
+  const textStyle = {
+    ...defaultStyles.textStyle,
+    ...style.textStyle,
+  };
+
+  const handlePress = () => {
+    if (!isDisabled) {
+      onPress();
+    }
+  };
+
   return (
-    <TouchableOpacity style={styles.buttonStyle} onPress={onPress}>
-      <Text style={styles.textStyle}>{title}</Text>
+    <TouchableOpacity
+      // @ts-ignore
+      style={animatedButtonStyle}
+      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}>
+      <Text style={textStyle}>{title}</Text>
     </TouchableOpacity>
   );
 };
 
 const defaultStyles = StyleSheet.create({
-  gradientBackground: {
-    flex: 1,
-  },
   buttonStyle: {
     backgroundColor: '#2d525a',
     borderRadius: 5,

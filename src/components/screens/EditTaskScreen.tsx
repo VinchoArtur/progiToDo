@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-  Button,
+  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -10,11 +10,13 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {useNavigateBack} from '../../navigation/Navigation';
-import {updateTask} from '../../redux/actions/todoActions';
+import {addTask, updateTask} from '../../redux/actions/todoActions';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {ParamListBase, RouteProp} from '@react-navigation/native';
 import {RootStackParamList, Task} from '../../redux/actions/types';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import ProgiButton from '../elements/buttons/ProgiButton';
+import {nanoid} from 'nanoid';
 
 type EditTaskScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -45,22 +47,47 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [newDescription, setNewDescription] = useState(task?.description || '');
 
-  const handleUpdateTask = () => {
-    // Обновляем задачу с новыми данными
-    if (task) {
-      const updatedTask: Task = {
-        ...task,
-        title: newTitle,
-        dueDate: newDueDate,
-        description: newDescription,
-      };
-      dispatch(updateTask(updatedTask));
+  useEffect(() => {
+    if (!task) {
+      setNewTitle('');
+      setNewDueDate('');
+      setNewDescription('');
+    } else {
+      setNewTitle(task.title);
+      setNewDueDate(task.dueDate);
+      setNewDescription(task.description);
     }
-    navigateBack(); // Возвращаемся на предыдущий экран
+  }, [task]);
+
+  const handleCreateTask = () => {
+    const newTask: Task = {
+      id: nanoid(),
+      title: newTitle,
+      dueDate: newDueDate,
+      description: newDescription,
+    };
+    dispatch(addTask(newTask));
+    navigateBack();
+  };
+
+  const handleUpdateTask = () => {
+    if (!task) {
+      handleCreateTask();
+      return;
+    }
+
+    const updatedTask: Task = {
+      ...task,
+      title: newTitle,
+      dueDate: newDueDate,
+      description: newDescription,
+    };
+    dispatch(updateTask(updatedTask));
+    navigateBack();
   };
 
   const handleCancel = () => {
-    navigateBack(); // Возвращаемся на предыдущий экран
+    navigateBack();
   };
 
   const handleDateConfirm = (date: Date) => {
@@ -85,12 +112,21 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       />
       <TouchableOpacity onPress={handleOpenDateTimePicker}>
         <Text style={styles.input}>
-          {newDueDate ? newDueDate.toString() : 'Select Due Date'}
+          {newDueDate
+            ? newDueDate.toLocaleString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              })
+            : 'Select Due Date'}
         </Text>
       </TouchableOpacity>
       <DateTimePickerModal
         isVisible={isDateTimePickerVisible}
         mode="datetime"
+        display="default" // Отображение только даты и времени без временной зоны
         onConfirm={handleDateConfirm}
         onCancel={handleCloseDateTimePicker}
       />
@@ -100,8 +136,38 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
         onChangeText={setNewDescription}
         multiline={true}
       />
-      <Button title="Update Task" onPress={handleUpdateTask} />
-      <Button title="Cancel" onPress={handleCancel} />
+      <Text style={styles.buttonContainer}>
+        <ProgiButton
+          title={task ? 'Update Task' : 'Create Task'}
+          onPress={task ? handleUpdateTask : handleCreateTask}
+          style={{
+            buttonStyle: {
+              backgroundColor: 'rgba(23,211,98,0.24)',
+            },
+            textStyle: {
+              fontWeight: '800',
+              fontSize: 20,
+              opacity: 1,
+            },
+          }}
+          isDisabled={!newTitle || !newDueDate} // Добавлено условие disabled
+        />
+        <View style={styles.buttonSpacer} /> {/* Отступ */}
+        <ProgiButton
+          title={'Cancel'}
+          onPress={handleCancel}
+          style={{
+            buttonStyle: {
+              backgroundColor: 'rgba(229,17,79,0.24)',
+            },
+            textStyle: {
+              fontWeight: '800',
+              fontSize: 20,
+              opacity: 1,
+            },
+          }}
+        />
+      </Text>
     </View>
   );
 };
@@ -123,5 +189,15 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     marginBottom: 10,
     paddingHorizontal: 10,
+    textAlign: 'center',
+    paddingTop: 10,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10, // Отступ сверху
+  },
+  buttonSpacer: {
+    width: 10, // Ширина отступа между кнопками
   },
 });
