@@ -1,53 +1,76 @@
 import React, {useEffect} from 'react';
-import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  Button,
+} from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {Task} from '../../redux/actions/types';
 import {navigateToEditScreen} from '../../navigation/Navigation';
-import {deleteTask} from '../../redux/actions/todoActions';
+import {addTask} from '../../redux/actions/todoActions';
+import 'react-native-get-random-values';
+import {nanoid} from 'nanoid';
+import TaskItem from './TaskItem';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
-  const tasks = useSelector((state: RootState) => state.tasks.tasks); // Обновлено получение задач
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   useEffect(() => {
     // Здесь можно выполнить получение задач из локального хранилища устройства
   }, []);
 
-  const handleTaskPress = (task: Task) => {
-    navigateToEditScreen(task.id); // Функция для перехода на экран редактирования задачи
+  const handleCreateTask = () => {
+    const newTask: Task = {
+      id: nanoid(),
+      title: 'New Task',
+      dueDate: new Date(),
+      isClosest: false,
+    };
+    dispatch(addTask(newTask));
+    navigateToEditScreen(newTask.id);
   };
-
-  const handleDeleteTask = (taskId: string) => {
-    dispatch(deleteTask(taskId));
-    // Здесь можно выполнить удаление задачи из локального хранилища устройства
-  };
-
-  const renderTaskItem = ({item}: {item: Task}) => (
-    <TouchableOpacity onPress={() => handleTaskPress(item)}>
-      <View style={[styles.taskItem, item.isClosest && styles.closestTask]}>
-        <Text>{item.title}</Text>
-        <Text>{item.dueDate}</Text>
-        <TouchableOpacity onPress={() => handleDeleteTask(item.id)}>
-          <Text>Delete</Text>
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
 
   const sortedTasks = [...tasks].sort(
     (a: Task, b: Task) =>
       new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
-  ); // Обновлено сравнение задач
+  );
+
+  const createFirstTask = () => {
+    const newTask: Task = {
+      id: Math.random().toString(),
+      title: 'New Task',
+      dueDate: new Date(),
+      isClosest: false,
+    };
+    dispatch(addTask(newTask));
+    navigateToEditScreen(newTask.id);
+  };
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={sortedTasks}
-        renderItem={renderTaskItem}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.taskList}
-      />
+      {tasks.length === 0 ? (
+        <View style={styles.emptyStateContainer}>
+          <Text style={styles.emptyStateText}>No tasks found.</Text>
+          <TouchableOpacity onPress={createFirstTask}>
+            <Text>Create Task</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={sortedTasks}
+            renderItem={({item}) => <TaskItem item={item} />}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.taskList}
+          />
+          <Button title="Add Task" onPress={handleCreateTask} />
+        </>
+      )}
     </View>
   );
 };
@@ -55,8 +78,17 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Полупрозрачный фон
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
     padding: 10,
+  },
+  emptyStateContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    marginBottom: 20,
   },
   taskList: {
     flexGrow: 1,
@@ -65,9 +97,28 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: 'gray',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  taskTitle: {
+    flex: 1,
+    fontWeight: 'bold',
+    marginRight: 10,
+  },
+  deleteIcon: {
+    color: 'red',
+    fontSize: 18,
+    marginLeft: 10,
+  },
+  progressBar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    backgroundColor: 'purple',
   },
   closestTask: {
-    backgroundColor: '#ffcccc', // Цвет для ближайшей задачи
+    backgroundColor: '#ffcccc',
   },
 });
 

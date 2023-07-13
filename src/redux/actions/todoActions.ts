@@ -1,13 +1,8 @@
-import {v4 as uuidv4} from 'uuid';
 import {Task} from './types';
 
-export const addTask = (title: string, dueDate: string) => ({
+export const addTask = (task: Task) => ({
   type: 'ADD_TASK',
-  payload: {
-    id: uuidv4(),
-    title,
-    dueDate,
-  },
+  payload: task,
 });
 
 export const deleteTask = (taskId: string) => ({

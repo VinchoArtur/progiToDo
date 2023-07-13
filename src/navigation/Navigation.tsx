@@ -1,4 +1,4 @@
-import { NavigationContainerRef, useNavigation } from "@react-navigation/native";
+import {NavigationContainerRef, useNavigation} from '@react-navigation/native';
 
 let navigator: NavigationContainerRef<any> | null;
 
@@ -8,12 +8,11 @@ export const setTopLevelNavigator = (
   navigator = navigatorRef;
 };
 
-export const navigateToEditScreen = (taskId: string) => {
+export const navigateToEditScreen = (taskId?: string) => {
   if (navigator) {
     navigator.navigate('EditTask', {taskId});
   }
 };
-
 
 export const useNavigateBack = () => {
   const navigation = useNavigation();
