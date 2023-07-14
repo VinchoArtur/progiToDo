@@ -105,12 +105,23 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        value={newTitle}
-        onChangeText={setNewTitle}
-      />
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Title</Text>
+        <TextInput
+          style={styles.input}
+          value={newTitle}
+          onChangeText={setNewTitle}
+        />
+      </View>
+
       <TouchableOpacity onPress={handleOpenDateTimePicker}>
+        <DateTimePickerModal
+          isVisible={isDateTimePickerVisible}
+          mode="datetime"
+          display="default" // Отображение только даты и времени без временной зоны
+          onConfirm={handleDateConfirm}
+          onCancel={handleCloseDateTimePicker}
+        />
         <Text style={styles.input}>
           {newDueDate
             ? newDueDate.toLocaleString('en-US', {
@@ -123,20 +134,20 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             : 'Select Due Date'}
         </Text>
       </TouchableOpacity>
-      <DateTimePickerModal
-        isVisible={isDateTimePickerVisible}
-        mode="datetime"
-        display="default" // Отображение только даты и времени без временной зоны
-        onConfirm={handleDateConfirm}
-        onCancel={handleCloseDateTimePicker}
-      />
-      <TextInput
-        style={styles.input}
-        value={newDescription}
-        onChangeText={setNewDescription}
-        multiline={true}
-      />
-      <Text style={styles.buttonContainer}>
+
+      <View style={styles.inputContainer}>
+        <Text style={styles.inputLabel}>Description</Text>
+        <TextInput
+          style={styles.descriptionInput}
+          value={newDescription}
+          onChangeText={setNewDescription}
+          multiline={true}
+          placeholderTextColor={'#fff'}
+          placeholder="Enter description" // Добавлен placeholder
+        />
+      </View>
+
+      <View style={styles.buttonContainer}>
         <ProgiButton
           title={task ? 'Update Task' : 'Create Task'}
           onPress={task ? handleUpdateTask : handleCreateTask}
@@ -152,7 +163,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
           }}
           isDisabled={!newTitle || !newDueDate} // Добавлено условие disabled
         />
-        <View style={styles.buttonSpacer} /> {/* Отступ */}
+        <View style={styles.buttonSpacer} />
         <ProgiButton
           title={'Cancel'}
           onPress={handleCancel}
@@ -167,7 +178,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             },
           }}
         />
-      </Text>
+      </View>
     </View>
   );
 };
@@ -181,8 +192,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#133b45',
   },
+  inputContainer: {
+    marginBottom: 10,
+    width: '100%',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  inputLabel: {
+    color: '#fff',
+    fontSize: 16,
+    marginBottom: 5,
+  },
   input: {
-    width: '80%',
+    width: '100%',
     color: '#fff',
     height: 40,
     borderWidth: 1,
@@ -191,6 +213,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     textAlign: 'center',
     paddingTop: 10,
+    borderRadius: 5,
+  },
+  descriptionInput: {
+    width: '100%',
+    color: '#fff',
+    height: 120, // Высота текстового поля для ввода описания
+    borderWidth: 1,
+    borderColor: 'gray',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    borderRadius: 5,
+    textAlignVertical: 'top',
   },
   buttonContainer: {
     flexDirection: 'row',

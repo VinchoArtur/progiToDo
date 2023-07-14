@@ -44,7 +44,9 @@ const TaskItem: React.FC<{item: Task}> = ({item}) => {
     <TouchableOpacity onPress={handleTaskPress}>
       <View style={[styles.taskItem, item.isClosest && styles.closestTask]}>
         <Text style={styles.taskTitle}>{item.title}</Text>
-        <Text style={{color: '#fff', marginRight: 1}}>{progress.toFixed(2)}%,</Text>
+        <Text style={{color: '#fff', marginRight: 1}}>
+          {progress.toFixed(2)}%,
+        </Text>
         <Text style={{color: '#fff'}}>
           {item?.dueDate?.toLocaleString() || 'Нет даты исполнения'}
           {/* Отображение даты исполнения задачи */}
