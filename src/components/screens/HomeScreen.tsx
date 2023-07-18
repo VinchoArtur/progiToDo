@@ -1,5 +1,12 @@
 import React, {useEffect} from 'react';
-import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {Task} from '../../redux/actions/types';
@@ -35,13 +42,27 @@ const HomeScreen: React.FC = () => {
       {tasks.length === 0 ? (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.emptyStateText}>
-            Please Create your first task.
+            Please create your first task.
           </Text>
           <TouchableOpacity>
             <ProgiButton
+              icon={'add-circle-outline'}
               title={'Create task'}
               onPress={createFirstTask}
               isDisabled={false}
+              showTitle={false}
+              iconSize={30}
+              style={{
+                buttonStyle: {
+                  width: 50,
+                  height: 50,
+                  paddingVertical: 10,
+                  paddingHorizontal: 0,
+                  paddingLeft: 0,
+                  paddingRight: 4,
+                  borderRadius: 25,
+                },
+              }}
             />
           </TouchableOpacity>
         </View>
@@ -53,7 +74,15 @@ const HomeScreen: React.FC = () => {
             keyExtractor={item => item.id}
             contentContainerStyle={styles.taskList}
           />
-          <Button title="Add Task" onPress={handleCreateTask} />
+          <TouchableOpacity>
+            <ProgiButton
+              title={'Add Task'}
+              onPress={handleCreateTask}
+              isDisabled={false}
+              icon={'add-circle-outline'}
+              showTitle={false}
+            />
+          </TouchableOpacity>
         </>
       )}
     </View>

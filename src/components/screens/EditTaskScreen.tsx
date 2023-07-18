@@ -149,6 +149,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
 
       <View style={styles.buttonContainer}>
         <ProgiButton
+          icon={null}
           title={task ? 'Update Task' : 'Create Task'}
           onPress={task ? handleUpdateTask : handleCreateTask}
           style={{
@@ -167,6 +168,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
         <ProgiButton
           title={'Cancel'}
           onPress={handleCancel}
+          icon={null}
           style={{
             buttonStyle: {
               backgroundColor: 'rgba(229,17,79,0.24)',

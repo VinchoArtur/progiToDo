@@ -37,7 +37,12 @@ const Navigation: React.FC = () => {
     },
     headerTintColor: '#fff',
     headerRight: () => (
-      <ProgiButton onPress={handleExit} title={'Exit'} isDisabled={false} />
+      <ProgiButton
+        onPress={handleExit}
+        title={'Exit'}
+        isDisabled={false}
+        icon={null}
+      />
     ),
   };
 
@@ -61,7 +66,12 @@ const Navigation: React.FC = () => {
     },
     headerTintColor: '#fff',
     headerRight: () => (
-      <ProgiButton onPress={handleExit} title={'Exit'} isDisabled={false} />
+      <ProgiButton
+        onPress={handleExit}
+        title={'Exit'}
+        isDisabled={false}
+        icon={null}
+      />
     ),
     headerBackground: () => (
       <LinearGradient

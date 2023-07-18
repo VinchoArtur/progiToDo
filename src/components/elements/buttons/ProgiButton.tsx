@@ -4,17 +4,26 @@ import {
   Text,
   TouchableOpacity,
   ViewStyle,
-  Animated, TextStyle
-} from "react-native";
+  Animated,
+  TextStyle,
+  Image,
+  Platform,
+  Alert,
+} from 'react-native';
+import {getImageAddIcon} from '../../../utils/ImageLoader';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface IProgiButton {
   title: string;
   onPress: () => void;
+  icon: string | null;
+  showTitle?: boolean;
   style?: {
     buttonStyle?: ViewStyle;
     textStyle?: TextStyle;
   };
   isDisabled?: boolean;
+  iconSize?: number;
 }
 
 const ProgiButton: React.FC<IProgiButton> = ({
@@ -22,6 +31,9 @@ const ProgiButton: React.FC<IProgiButton> = ({
   onPress,
   style = {},
   isDisabled,
+  icon,
+  showTitle = true,
+  iconSize = 24,
 }) => {
   const scaleValue = new Animated.Value(1);
   const handlePressIn = () => {
@@ -68,7 +80,15 @@ const ProgiButton: React.FC<IProgiButton> = ({
       onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}>
-      <Text style={textStyle}>{title}</Text>
+      {/*{requireIcon && <Image source={requireIcon.uri} />}*/}
+      {showTitle && <Text style={textStyle}>{title}</Text>}
+      {icon && (
+        <Text style={textStyle}>
+          {' '}
+          <Icon name={icon} size={iconSize} />
+          {/* Отображение иконки */}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 };
