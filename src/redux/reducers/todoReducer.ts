@@ -3,10 +3,12 @@ import {Task} from '../actions/types';
 
 interface TaskState {
   tasks: Task[];
+  calendarPermission: any;
 }
 
 const initialState: TaskState = {
   tasks: [],
+  calendarPermission: null,
 };
 
 const tasksReducer = (state = initialState, action: any) => {
@@ -28,6 +30,8 @@ const tasksReducer = (state = initialState, action: any) => {
           task.id === action.payload.id ? action.payload : task,
         ),
       };
+    case 'UPDATE_CALENDAR_PERMISSION':
+      return {...state, calendarPermission: action.payload};
     default:
       return state;
   }
@@ -35,6 +39,7 @@ const tasksReducer = (state = initialState, action: any) => {
 
 const rootReducer = combineReducers({
   tasks: tasksReducer,
+  calendarPermission: tasksReducer,
 });
 
 export default rootReducer;

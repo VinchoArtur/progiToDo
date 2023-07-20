@@ -15,9 +15,21 @@ import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 import TaskItem from './TaskItem';
 import ProgiButton from '../elements/buttons/ProgiButton';
+import {requestCalendarPermission} from '../../redux/actions/todoActions';
+import {PERMISSIONS, request} from 'react-native-permissions';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
+
+  // @ts-ignore
+  useEffect(() => {
+    const fetchCalendarPermission = async () => {
+      const permission = await request(PERMISSIONS.ANDROID.WRITE_CALENDAR);
+      dispatch(requestCalendarPermission(permission));
+    };
+
+    fetchCalendarPermission();
+  }, [dispatch]);
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   useEffect(() => {

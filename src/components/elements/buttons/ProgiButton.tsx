@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 interface IProgiButton {
   title: string;
   onPress: () => void;
-  icon: string | null;
+  icon?: string | null;
   showTitle?: boolean;
   style?: {
     buttonStyle?: ViewStyle;
