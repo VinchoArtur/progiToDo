@@ -3,7 +3,8 @@ import {Task} from '../../redux/actions/types';
 import {useDispatch} from 'react-redux';
 import {navigateToEditScreen} from '../../navigation/Navigation';
 import {deleteTask} from '../../redux/actions/todoActions';
-import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
+import {styles} from './styles/styles';
 
 const useTaskItem = (item: Task) => {
   const [progress, setProgress] = useState(0);
@@ -12,7 +13,9 @@ const useTaskItem = (item: Task) => {
     const interval = setInterval(() => {
       const currentTime = new Date().getTime();
       const dueDate = item.dueDate.getTime();
-      const progressPercentage = ((dueDate - currentTime) / dueDate) * 100;
+      const remainingTime = dueDate - currentTime;
+      const progressPercentage =
+        ((dueDate - currentTime) / remainingTime) * 100;
       setProgress(progressPercentage);
     }, 1000);
 
@@ -41,9 +44,12 @@ const TaskItem: React.FC<{item: Task}> = ({item}) => {
     <TouchableOpacity onPress={handleTaskPress}>
       <View style={[styles.taskItem, item.isClosest && styles.closestTask]}>
         <Text style={styles.taskTitle}>{item.title}</Text>
-        <Text>{progress}</Text>
-        <Text>
-          {item?.dueDate?.getTime()?.toString() || 'Нет даты исполнения'}
+        <Text style={{color: '#fff', marginRight: 1}}>
+          {progress.toFixed(2)}%,
+        </Text>
+        <Text style={{color: '#fff'}}>
+          {item?.dueDate?.toLocaleString() || 'Нет даты исполнения'}
+          {/* Отображение даты исполнения задачи */}
         </Text>
         <TouchableOpacity onPress={handleDeleteTask}>
           <Text style={styles.deleteIcon}>X</Text>
@@ -53,37 +59,5 @@ const TaskItem: React.FC<{item: Task}> = ({item}) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  taskItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: 'gray',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  taskTitle: {
-    flex: 1,
-    fontWeight: 'bold',
-    marginRight: 10,
-  },
-  deleteIcon: {
-    color: 'red',
-    fontSize: 18,
-    marginLeft: 10,
-  },
-  progressBar: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-    height: '160%',
-    opacity: 0.3,
-    backgroundColor: '#ffcccc',
-  },
-  closestTask: {
-    backgroundColor: '#ffcccc',
-  },
-});
 
 export default TaskItem;

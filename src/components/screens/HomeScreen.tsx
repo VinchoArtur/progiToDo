@@ -1,20 +1,20 @@
 import React, {useEffect} from 'react';
 import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  StyleSheet,
   Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import {useSelector, useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {RootState} from '../../redux/store/store';
 import {Task} from '../../redux/actions/types';
 import {navigateToEditScreen} from '../../navigation/Navigation';
-import {addTask} from '../../redux/actions/todoActions';
 import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 import TaskItem from './TaskItem';
+import ProgiButton from '../elements/buttons/ProgiButton';
 
 const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,14 +25,7 @@ const HomeScreen: React.FC = () => {
   }, []);
 
   const handleCreateTask = () => {
-    const newTask: Task = {
-      id: nanoid(),
-      title: 'New Task',
-      dueDate: new Date(),
-      isClosest: false,
-    };
-    dispatch(addTask(newTask));
-    navigateToEditScreen(newTask.id);
+    navigateToEditScreen(nanoid());
   };
 
   const sortedTasks = [...tasks].sort(
@@ -41,23 +34,36 @@ const HomeScreen: React.FC = () => {
   );
 
   const createFirstTask = () => {
-    const newTask: Task = {
-      id: Math.random().toString(),
-      title: 'New Task',
-      dueDate: new Date(),
-      isClosest: false,
-    };
-    dispatch(addTask(newTask));
-    navigateToEditScreen(newTask.id);
+    navigateToEditScreen(nanoid());
   };
 
   return (
     <View style={styles.container}>
       {tasks.length === 0 ? (
         <View style={styles.emptyStateContainer}>
-          <Text style={styles.emptyStateText}>No tasks found.</Text>
-          <TouchableOpacity onPress={createFirstTask}>
-            <Text>Create Task</Text>
+          <Text style={styles.emptyStateText}>
+            Please create your first task.
+          </Text>
+          <TouchableOpacity>
+            <ProgiButton
+              icon={'add-circle-outline'}
+              title={'Create task'}
+              onPress={createFirstTask}
+              isDisabled={false}
+              showTitle={false}
+              iconSize={30}
+              style={{
+                buttonStyle: {
+                  width: 50,
+                  height: 50,
+                  paddingVertical: 10,
+                  paddingHorizontal: 0,
+                  paddingLeft: 0,
+                  paddingRight: 4,
+                  borderRadius: 25,
+                },
+              }}
+            />
           </TouchableOpacity>
         </View>
       ) : (
@@ -68,7 +74,15 @@ const HomeScreen: React.FC = () => {
             keyExtractor={item => item.id}
             contentContainerStyle={styles.taskList}
           />
-          <Button title="Add Task" onPress={handleCreateTask} />
+          <TouchableOpacity>
+            <ProgiButton
+              title={'Add Task'}
+              onPress={handleCreateTask}
+              isDisabled={false}
+              icon={'add-circle-outline'}
+              showTitle={false}
+            />
+          </TouchableOpacity>
         </>
       )}
     </View>
@@ -78,7 +92,7 @@ const HomeScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: '#133b45',
     padding: 10,
   },
   emptyStateContainer: {
@@ -87,8 +101,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   emptyStateText: {
-    fontSize: 16,
+    fontSize: 24,
     marginBottom: 20,
+    color: '#fff',
   },
   taskList: {
     flexGrow: 1,

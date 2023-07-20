@@ -2,7 +2,8 @@ export interface Task {
   id: string;
   title: string;
   dueDate: Date;
-  isClosest: boolean;
+  description?: string;
+  isClosest?: boolean;
 }
 
 export type RootStackParamList = {
