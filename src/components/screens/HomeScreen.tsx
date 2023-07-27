@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {Dispatch, useEffect} from 'react';
 import {
   Button,
   FlatList,
@@ -15,11 +15,16 @@ import 'react-native-get-random-values';
 import {nanoid} from 'nanoid';
 import TaskItem from './TaskItem';
 import ProgiButton from '../elements/buttons/ProgiButton';
-import {requestCalendarPermission} from '../../redux/actions/todoActions';
+import {
+  addTask,
+  requestCalendarPermission,
+  setTasks,
+} from '../../redux/actions/todoActions';
 import {PERMISSIONS, request} from 'react-native-permissions';
+import {loadTasksFromMemory} from '../../services/WriteReadService';
 
 const HomeScreen: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch: Dispatch<any> = useDispatch();
 
   // @ts-ignore
   useEffect(() => {
@@ -27,15 +32,24 @@ const HomeScreen: React.FC = () => {
       const permission = await request(PERMISSIONS.ANDROID.WRITE_CALENDAR);
       dispatch(requestCalendarPermission(permission));
     };
-
-    fetchCalendarPermission();
+    fetchCalendarPermission().then(result => {
+      console.log(result);
+    });
   }, [dispatch]);
-  const tasks = useSelector((state: RootState) => state.tasks.tasks);
 
   useEffect(() => {
-    // Здесь можно выполнить получение задач из локального хранилища устройства
-  }, []);
-
+    const fetchTasksFromMemory = async () => {
+      const tasksFromMemory: Task[] = await loadTasksFromMemory();
+      if (tasksFromMemory.length > 0) {
+        // Диспатчим полученные задачи в Redux для обновления состояния
+        dispatch(setTasks(tasksFromMemory));
+      }
+    };
+    fetchTasksFromMemory().then(result => {
+      console.log(result);
+    });
+  }, [dispatch]);
+  const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const handleCreateTask = () => {
     navigateToEditScreen(nanoid());
   };
@@ -44,10 +58,6 @@ const HomeScreen: React.FC = () => {
     (a: Task, b: Task) =>
       new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime(),
   );
-
-  const createFirstTask = () => {
-    navigateToEditScreen(nanoid());
-  };
 
   return (
     <View style={styles.container}>
@@ -60,7 +70,7 @@ const HomeScreen: React.FC = () => {
             <ProgiButton
               icon={'add-circle-outline'}
               title={'Create task'}
-              onPress={createFirstTask}
+              onPress={handleCreateTask}
               isDisabled={false}
               showTitle={false}
               iconSize={30}

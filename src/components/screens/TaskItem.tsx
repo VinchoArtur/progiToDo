@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Task} from '../../redux/actions/types';
 import {useDispatch} from 'react-redux';
 import {navigateToEditScreen} from '../../navigation/Navigation';
 import {deleteTask} from '../../redux/actions/todoActions';
-import {Platform, Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {styles} from './styles/styles';
-import {request, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {PERMISSIONS, request, RESULTS} from 'react-native-permissions';
 import RNCalendarEvents from 'react-native-calendar-events';
 
 const useTaskItem = (item: Task) => {
@@ -59,8 +59,7 @@ const TaskItem: React.FC<{item: Task}> = ({item}) => {
 
   const requestCalendarPermissions = async () => {
     try {
-      const result = await request(PERMISSIONS.ANDROID.WRITE_CALENDAR);
-      return result;
+      return await request(PERMISSIONS.ANDROID.WRITE_CALENDAR);
     } catch (error) {
       console.error('Error requesting calendar permissions:', error);
       return RESULTS.DENIED;

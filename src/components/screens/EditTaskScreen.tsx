@@ -39,6 +39,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   taskId,
 }: EditTaskScreenProps) => {
   const task = useSelector((state: RootState) =>
+    // @ts-ignore
     state.tasks.tasks.find(t => t.id === route.params.taskId),
   );
   const permission = useSelector((state: RootState) => {
@@ -97,7 +98,6 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
 
     // Обновляем событие в календаре
     await updateCalendarEvent(updatedTask.title, newDueDate, task);
-
     navigateBack();
   };
 
@@ -167,15 +167,6 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       }
     } else {
       console.log('Calendar permissions not granted');
-    }
-  };
-
-  const requestCalendarPermissions = async () => {
-    try {
-      permission;
-    } catch (error) {
-      console.error('Error requesting calendar permissions:', error);
-      return RESULTS.DENIED;
     }
   };
 
