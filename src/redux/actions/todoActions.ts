@@ -14,3 +14,8 @@ export const updateTask = (task: Task) => ({
   type: 'UPDATE_TASK',
   payload: task,
 });
+
+export const requestCalendarPermission = (permission: string) => ({
+  type: 'UPDATE_CALENDAR_PERMISSION',
+  payload: permission,
+});

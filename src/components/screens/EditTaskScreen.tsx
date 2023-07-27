@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  Alert,
   StyleSheet,
   Text,
   TextInput,
@@ -17,6 +16,9 @@ import {RootStackParamList, Task} from '../../redux/actions/types';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import ProgiButton from '../elements/buttons/ProgiButton';
 import {nanoid} from 'nanoid';
+import {RESULTS} from 'react-native-permissions';
+import RNCalendarEvents from 'react-native-calendar-events';
+import CalendarSyncScreen from '../elements/calendar/CalendarSync';
 
 type EditTaskScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
@@ -39,38 +41,47 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   const task = useSelector((state: RootState) =>
     state.tasks.tasks.find(t => t.id === route.params.taskId),
   );
+  const permission = useSelector((state: RootState) => {
+    return state.calendarPermission.calendarPermission;
+  });
   const dispatch = useDispatch();
   const navigateBack = useNavigateBack();
 
   const [newTitle, setNewTitle] = useState(task?.title || '');
-  const [newDueDate, setNewDueDate] = useState(task?.dueDate || '');
+  const [newDueDate, setNewDueDate] = useState<Date | undefined>(
+    task?.dueDate ? new Date(task.dueDate) : undefined,
+  );
   const [isDateTimePickerVisible, setIsDateTimePickerVisible] = useState(false);
   const [newDescription, setNewDescription] = useState(task?.description || '');
 
   useEffect(() => {
     if (!task) {
       setNewTitle('');
-      setNewDueDate('');
+      setNewDueDate(undefined);
       setNewDescription('');
     } else {
       setNewTitle(task.title);
-      setNewDueDate(task.dueDate);
+      setNewDueDate(new Date(task.dueDate));
       setNewDescription(task.description);
     }
   }, [task]);
 
-  const handleCreateTask = () => {
+  const handleCreateTask = async () => {
     const newTask: Task = {
       id: nanoid(),
       title: newTitle,
-      dueDate: newDueDate,
+      dueDate: newDueDate || new Date(), // Сохраняем в формате ISO строку даты
       description: newDescription,
     };
     dispatch(addTask(newTask));
+
+    // Создаем событие в календаре
+    await createCalendarEvent(newTask.title, newDueDate);
+
     navigateBack();
   };
 
-  const handleUpdateTask = () => {
+  const handleUpdateTask = async () => {
     if (!task) {
       handleCreateTask();
       return;
@@ -79,10 +90,14 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     const updatedTask: Task = {
       ...task,
       title: newTitle,
-      dueDate: newDueDate,
+      dueDate: newDueDate || '', // Сохраняем в формате ISO строку даты
       description: newDescription,
     };
     dispatch(updateTask(updatedTask));
+
+    // Обновляем событие в календаре
+    await updateCalendarEvent(updatedTask.title, newDueDate, task);
+
     navigateBack();
   };
 
@@ -103,6 +118,67 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     setIsDateTimePickerVisible(false);
   };
 
+  const createCalendarEvent = async (
+    title: string,
+    dueDate: Date | undefined,
+  ) => {
+    const permissions = permission;
+
+    if (permissions === RESULTS.GRANTED) {
+      try {
+        await RNCalendarEvents.saveEvent(title, {
+          startDate: dueDate?.toISOString() || '',
+          endDate: dueDate?.toISOString() || '',
+          allDay: false,
+          notes: newDescription,
+          alarms: [{date: -30}], // Оповещение за 30 минут до события
+        });
+      } catch (error) {
+        console.error('Error saving calendar event:', error);
+      }
+    } else {
+      console.log('Calendar permissions not granted');
+    }
+  };
+
+  const updateCalendarEvent = async (
+    title: string,
+    dueDate: Date | undefined,
+    taskToUpdate: Task,
+  ) => {
+    if (permission === RESULTS.GRANTED) {
+      try {
+        const existingEventParams = {
+          title: taskToUpdate.title,
+          startDate: new Date()?.toISOString(),
+          endDate: new Date(taskToUpdate.dueDate)?.toISOString(),
+          allDay: false,
+          notes: taskToUpdate.description,
+          alarms: [{date: -30}], // Оповещение за 30 минут до события
+        };
+
+        await RNCalendarEvents.saveEvent(title, {
+          ...existingEventParams,
+          // @ts-ignore
+          occurrenceDate: newDueDate?.toISOString(),
+        });
+      } catch (error) {
+        console.error('Error updating calendar event:', error);
+      }
+    } else {
+      console.log('Calendar permissions not granted');
+    }
+  };
+
+  const requestCalendarPermissions = async () => {
+    try {
+      permission;
+    } catch (error) {
+      console.error('Error requesting calendar permissions:', error);
+      return RESULTS.DENIED;
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
@@ -113,7 +189,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
           onChangeText={setNewTitle}
         />
       </View>
-
+      <CalendarSyncScreen />
       <TouchableOpacity onPress={handleOpenDateTimePicker}>
         <DateTimePickerModal
           isVisible={isDateTimePickerVisible}
