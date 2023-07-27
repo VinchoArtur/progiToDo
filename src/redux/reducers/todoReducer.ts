@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 import {Task} from '../actions/types';
+import { PrepareToDelete, SaveSingleTask, UpdateTaskBeforeSave } from "../../utils/TaskWorker";
 
 interface TaskState {
   tasks: Task[];
@@ -16,19 +17,22 @@ const tasksReducer = (state = initialState, action: any) => {
     case 'ADD_TASK':
       return {
         ...state,
-        tasks: [...state.tasks, action.payload],
+        tasks: SaveSingleTask([...state.tasks, action.payload]),
+      };
+    case 'SET_TASKS':
+      return {
+        ...state,
+        tasks: action.payload,
       };
     case 'DELETE_TASK':
       return {
         ...state,
-        tasks: state.tasks.filter((task: Task) => task.id !== action.payload),
+        tasks: PrepareToDelete(state.tasks, action),
       };
     case 'UPDATE_TASK':
       return {
         ...state,
-        tasks: state.tasks.map(task =>
-          task.id === action.payload.id ? action.payload : task,
-        ),
+        tasks: UpdateTaskBeforeSave(state.tasks, action),
       };
     case 'UPDATE_CALENDAR_PERMISSION':
       return {...state, calendarPermission: action.payload};

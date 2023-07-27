@@ -5,6 +5,11 @@ export const addTask = (task: Task) => ({
   payload: task,
 });
 
+export const setTasks = (tasks: Task[]) => ({
+  type: 'SET_TASKS',
+  payload: tasks,
+});
+
 export const deleteTask = (taskId: string) => ({
   type: 'DELETE_TASK',
   payload: taskId,
