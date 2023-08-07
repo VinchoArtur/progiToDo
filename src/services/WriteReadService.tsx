@@ -13,7 +13,7 @@ export const saveTasksToMemory = async (tasks: Task[]) => {
     const tasksJSON = toJSON(tasks);
     console.log(`tasksJSON`);
     console.log(tasksJSON);
-    console.log(`tasksJSON`);
+    console.log('tasksJSON');
     // Сохраняем в памяти телефона (здесь можно использовать AsyncStorage или другой подход для сохранения)
     await AsyncStorage.setItem('tasks', tasksJSON);
   } catch (error) {

@@ -2,13 +2,15 @@ import {StyleSheet} from 'react-native';
 
 export const styles = StyleSheet.create({
   taskItem: {
-    padding: 10,
+    padding: 5,
     marginTop: 1,
     marginBottom: 1,
     borderBottomWidth: 1,
     borderBottomColor: 'gray',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,255,255, 0.3)',
   },
   taskTitle: {
     flex: 1,
@@ -20,6 +22,9 @@ export const styles = StyleSheet.create({
     color: 'red',
     fontSize: 18,
     marginLeft: 10,
+    padding: 10,
+    backgroundColor: '#2d525a',
+    borderRadius: 10,
   },
   progressBar: {
     position: 'absolute',
@@ -30,4 +35,10 @@ export const styles = StyleSheet.create({
     opacity: 0.3,
   },
   closestTask: {},
+  timeDescription: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginTop: 5,
+    color: '#fff',
+  },
 });

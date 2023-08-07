@@ -1,5 +1,5 @@
 module.exports = {
-  root: true,
+  root: false,
   extends: '@react-native-community',
   rules: {
     '@typescript-eslint/no-unused-vars': 'off',
