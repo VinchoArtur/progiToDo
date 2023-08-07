@@ -29,13 +29,13 @@ const CalendarSyncScreen: React.FC = () => {
 
   return (
     <View>
-      <Text>Calendar Sync Screen</Text>
-      {!permissionsGranted && (
-        <TouchableOpacity onPress={requestCalendarPermissions}>
-          <Text>Request Calendar Permissions</Text>
-        </TouchableOpacity>
-      )}
-      {permissionsGranted && <Text>Calendar Permissions Granted</Text>}
+      {/*<Text>Calendar Sync Screen</Text>*/}
+      {/*{!permissionsGranted && (*/}
+      {/*  <TouchableOpacity onPress={requestCalendarPermissions}>*/}
+      {/*    <Text>Request Calendar Permissions</Text>*/}
+      {/*  </TouchableOpacity>*/}
+      {/*)}*/}
+      {/*{permissionsGranted && <Text>Calendar Permissions Granted</Text>}*/}
     </View>
   );
 };

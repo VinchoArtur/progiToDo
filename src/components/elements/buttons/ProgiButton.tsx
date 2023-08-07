@@ -81,10 +81,9 @@ const ProgiButton: React.FC<IProgiButton> = ({
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}>
       {/*{requireIcon && <Image source={requireIcon.uri} />}*/}
-      {showTitle && <Text style={textStyle}>{title}</Text>}
+      {(showTitle && title) && <Text style={textStyle}>{title}</Text>}
       {icon && (
         <Text style={textStyle}>
-          {' '}
           <Icon name={icon} size={iconSize} />
           {/* Отображение иконки */}
         </Text>

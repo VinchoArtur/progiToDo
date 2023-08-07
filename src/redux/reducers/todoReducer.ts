@@ -1,6 +1,10 @@
 import {combineReducers} from 'redux';
 import {Task} from '../actions/types';
-import { PrepareToDelete, SaveSingleTask, UpdateTaskBeforeSave } from "../../utils/TaskWorker";
+import {
+  PrepareToDelete,
+  SaveSingleTask,
+  UpdateTaskBeforeSave,
+} from '../../utils/TaskWorker';
 
 interface TaskState {
   tasks: Task[];

@@ -88,7 +88,7 @@ const Navigation: React.FC = () => {
           name="Home"
           component={HomeScreen}
           options={{
-            title: 'ToDo App',
+            title: 'Progi ToDo',
             ...headerOptions,
           }}
         />
