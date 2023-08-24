@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Task } from "../../redux/actions/types";
 import { useDispatch } from "react-redux";
 import { navigateToEditScreen } from "../../navigation/Navigation";
@@ -21,6 +21,12 @@ const TaskItem: React.FC<{ item: Task }> = ({ item }) => {
   const dispatch = useDispatch();
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
+  const currentDate = new Date();
+  let taskStyles = {
+    backgroundColor: currentDate > new Date(item?.dueDate) ? "rgba(216,11,11,0.7)" :
+      currentDate >= new Date(item?.startDate) && currentDate <= new Date(item?.dueDate) ? "rgba(27,94,216,0.75)" :
+        'rgba(255,255,255, 0.3)',
+  };
   const handleTaskPress = () => {
     navigateToEditScreen(item.id);
   };
@@ -50,8 +56,9 @@ const TaskItem: React.FC<{ item: Task }> = ({ item }) => {
           style={[
             styles.taskItem,
             item.isClosest && styles.closestTask,
+            taskStyles, // Применяем стили для фона
             {
-              transform: [{ translateX: slideAnimation }] // Применяем анимацию перемещения
+              transform: [{ translateX: slideAnimation }]
             }
           ]}
         >

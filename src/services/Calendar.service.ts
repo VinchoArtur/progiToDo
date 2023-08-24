@@ -9,6 +9,8 @@ export const createCalendarEvent = async (
   notificationTime: number,
   description: string,
   taskDuration: 'day' | 'week' | 'month',
+  startReminder: number,
+  endReminder: number
 ): Promise<string | null> => {
   const permissions = RESULTS.GRANTED; // Change this to your actual permission check
 
@@ -25,12 +27,19 @@ export const createCalendarEvent = async (
       } else if (taskDuration === 'month') {
         recurrence = 'monthly'; // Ежемесячное повторение
       }
+      // @ts-ignore
+      const startReminderDate = new Date(startDate);
+      startReminderDate.setMinutes(startReminderDate.getMinutes() - startReminder);
+
+      // @ts-ignore
+      const endReminderDate = new Date(dueDate);
+      endReminderDate.setMinutes(endReminderDate.getMinutes() - endReminder);
       const eventOptions = {
         startDate: startDate?.toISOString() || '',
         endDate: dueDate?.toISOString() || '',
         allDay: false,
-        notes: description,
-        alarms: [{date: notificationTime}],
+        description: description,
+        alarms: [{date: startReminder}, {date: endReminder}],
         // recurrence, // Устанавливаем правильное повторение в зависимости от продолжительности
       };
 

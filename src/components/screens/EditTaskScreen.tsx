@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
+import  Flexbox  from 'react-native-flexbox';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
 import { useNavigateBack } from "../../navigation/Navigation";
@@ -49,6 +50,13 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   const [newStartDate, setNewStartDueDate] = useState<Date | undefined>(
     task?.startDate ? new Date(task.startDate) : undefined
   );
+  const [newStartReminder, setNewStartReminder] = useState<number>(
+    task?.startReminder || 0
+  );
+
+  const [newEndReminder, setNewEndReminder] = useState<number>(
+    task?.endReminder || 0
+  );
   const [newDescription, setNewDescription] = useState(task?.description || "");
   const [notificationTime, setNotificationTime] = useState<number>(
     task?.notificationTime | 1
@@ -91,7 +99,9 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       newDueDate,
       notificationTime,
       newDescription,
-      taskDuration
+      taskDuration,
+      newStartReminder,
+      newEndReminder
     );
     const newTask: Task = {
       id: nanoid(),
@@ -101,7 +111,9 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       startDate: newStartDate,
       dueDate: newDueDate || calculateDueDate(taskDuration),
       description: newDescription,
-      notificationTime: notificationTime
+      notificationTime: notificationTime,
+      startReminder: newStartReminder,
+      endReminder: newEndReminder
     };
     dispatch(addTask(newTask));
     navigateBack();
@@ -118,7 +130,9 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       startDate: newStartDate,
       dueDate: newDueDate || "", // Сохраняем в формате ISO строку даты
       description: newDescription,
-      notificationTime: notificationTime
+      notificationTime: notificationTime,
+      startReminder: newStartReminder,
+      endReminder: newEndReminder
     };
     // Обновляем событие в календаре
     await updateCalendarEvent(
@@ -163,16 +177,26 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
         const alarmDate = new Date(
           (dueDate?.getTime() || 0) - notificationTime * 60 * 1000
         );
-        await deleteCalendarEvent(task.title, task.dueDate);
+        // @ts-ignore
+        const startReminderDate = new Date(newStartDate);
+        startReminderDate.setMinutes(startReminderDate.getMinutes() - newStartReminder);
+
+        // @ts-ignore
+        const endReminderDate = new Date(newDueDate);
+        endReminderDate.setMinutes(endReminderDate.getMinutes() - newEndReminder);
+
         const existingEventParams = {
           title: taskToUpdate.title,
           startDate: new Date(startDate)?.toISOString(),
           endDate: new Date(taskToUpdate.dueDate)?.toISOString(),
           allDay: false,
-          notes: taskToUpdate.description,
-          alarms: [{ date: notificationTime }]
-
+          description: taskToUpdate.description,
+          alarms: [
+            { date: newStartReminder }, // Напоминание о начале
+            { date: newEndReminder } // Напоминание об окончании
+          ]
         };
+
         taskToUpdate.eventId = await RNCalendarEvents.saveEvent(taskToUpdate.title, {
           ...existingEventParams
         });
@@ -199,41 +223,42 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             onChangeText={setNewTitle}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>{t("task_duration")}</Text>
-          <Picker // Компонент Picker для выбора продолжительности
-            selectedValue={taskDuration}
-            onValueChange={itemValue => handleDurationChange(itemValue)}>
-            <Picker.Item label={t("day")} value="day" />
-            <Picker.Item label={t("week")} value="week" />
-            <Picker.Item label={t("month")} value="month" />
-          </Picker>
-        </View>
         <CalendarSyncScreen />
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>{t('notificationTime')}</Text>
+        <Text style={{color: 'white', textAlign: 'right', width: '100%', marginRight: 20, marginBottom: 10}}>{t('reminderTime')}</Text>
+
+        <Flexbox style={styles.dateInputContainer}>
+          {/*Select start due date*/}
+          <DatePicker
+            setData={setNewStartDueDate}
+            date={newStartDate}
+            style={styles.dateInput}
+            placeholderText={t("selectStart")}
+          />
           <TextInput
-            style={styles.input}
-            value={notificationTime?.toString()}
-            onChangeText={text => handleNotificationTimeChange(Number(text))}
+            style={styles.dateTextInput}
+            placeholder={t("start_reminder")}
+            value={newStartReminder?.toString()}
+            onChangeText={text => setNewStartReminder(Number(text))}
+            keyboardType="numeric"
+          />
+        </Flexbox>
+        <View style={styles.dateInputContainer}>
+          {/*Select end due date*/}
+          <DatePicker
+            setData={setNewDueDate}
+            date={newDueDate}
+            style={styles.dateInput}
+            placeholderText={t("selectDueDate")}
+          />
+          <TextInput
+            style={styles.dateTextInput}
+            placeholder={t("end_reminder")}
+            value={newEndReminder?.toString()}
+            onChangeText={text => setNewEndReminder(Number(text))}
             keyboardType="numeric"
           />
         </View>
 
-        {/*Select start due date*/}
-        <DatePicker
-          setData={setNewStartDueDate}
-          date={newStartDate}
-          style={styles.input}
-          placeholderText={t("selectStart")}
-        />
-        {/*Select end due date*/}
-        <DatePicker
-          setData={setNewDueDate}
-          date={newDueDate}
-          style={styles.input}
-          placeholderText={t("selectDueDate")}
-        />
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>{t("description")}</Text>
           <TextInput
