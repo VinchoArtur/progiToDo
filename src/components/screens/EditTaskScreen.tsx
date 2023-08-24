@@ -14,14 +14,11 @@ import RNCalendarEvents from "react-native-calendar-events";
 import CalendarSyncScreen from "../elements/calendar/CalendarSync";
 import { Picker } from "@react-native-picker/picker";
 import { addDays, addMonths } from "date-fns";
-import {
-  createCalendarEvent, deleteCalendarEvent,
-  getEventById,
-  removeEventById,
-  requestCalendarPermissions
-} from "../../services/Calendar.service";
+import { createCalendarEvent, deleteCalendarEvent } from "../../services/Calendar.service";
 import { styles } from "./styles/edit-task.style";
 import DatePicker from "../elements/input/DatePicker";
+import { useTranslation } from "react-i18next";
+import i18n from "../../localization/i18n"
 
 type EditTaskScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "EditTask">;
@@ -34,6 +31,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
                                                          route,
                                                          taskId
                                                        }: EditTaskScreenProps) => {
+  const { t } = useTranslation();
   const task = useSelector((state: RootState) =>
     // @ts-ignore
     state.tasks.tasks.find(t => t.id === route.params.taskId)
@@ -129,7 +127,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       newStartDate,
       // @ts-ignore
       calculateDueDate(taskDuration),
-      updatedTask,
+      updatedTask
     );
     dispatch(updateTask(updatedTask));
     navigateBack();
@@ -163,22 +161,18 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     if (permission === RESULTS.GRANTED) {
       try {
         const alarmDate = new Date(
-          // @ts-ignore
           (dueDate?.getTime() || 0) - notificationTime * 60 * 1000
         );
-        // @ts-ignore
-        await deleteCalendarEvent(task.title, task.dueDate)
-        // @ts-ignore
+        await deleteCalendarEvent(task.title, task.dueDate);
         const existingEventParams = {
           title: taskToUpdate.title,
           startDate: new Date(startDate)?.toISOString(),
           endDate: new Date(taskToUpdate.dueDate)?.toISOString(),
           allDay: false,
           notes: taskToUpdate.description,
-          alarms: [{date: notificationTime}],
+          alarms: [{ date: notificationTime }]
 
         };
-        // @ts-ignore
         taskToUpdate.eventId = await RNCalendarEvents.saveEvent(taskToUpdate.title, {
           ...existingEventParams
         });
@@ -198,7 +192,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
         // behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.container}>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Title</Text>
+          <Text style={styles.inputLabel}>{t("title")}</Text>
           <TextInput
             style={styles.input}
             value={newTitle}
@@ -206,18 +200,18 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
           />
         </View>
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Продолжительность задачи</Text>
+          <Text style={styles.inputLabel}>{t("task_duration")}</Text>
           <Picker // Компонент Picker для выбора продолжительности
             selectedValue={taskDuration}
             onValueChange={itemValue => handleDurationChange(itemValue)}>
-            <Picker.Item label="На день" value="day" />
-            <Picker.Item label="На неделю" value="week" />
-            <Picker.Item label="На месяц" value="month" />
+            <Picker.Item label={t("day")} value="day" />
+            <Picker.Item label={t("week")} value="week" />
+            <Picker.Item label={t("month")} value="month" />
           </Picker>
         </View>
         <CalendarSyncScreen />
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Notification Time (minutes)</Text>
+          <Text style={styles.inputLabel}>{t('notificationTime')}</Text>
           <TextInput
             style={styles.input}
             value={notificationTime?.toString()}
@@ -231,30 +225,30 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
           setData={setNewStartDueDate}
           date={newStartDate}
           style={styles.input}
-          placeholderText={"Select Start Due Date"}
+          placeholderText={t("selectStart")}
         />
         {/*Select end due date*/}
         <DatePicker
           setData={setNewDueDate}
           date={newDueDate}
           style={styles.input}
-          placeholderText={"Select Due Date"}
+          placeholderText={t("selectDueDate")}
         />
         <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>Description</Text>
+          <Text style={styles.inputLabel}>{t("description")}</Text>
           <TextInput
             style={styles.descriptionInput}
             value={newDescription}
             onChangeText={setNewDescription}
             multiline={true}
             placeholderTextColor={"#fff"}
-            placeholder="Enter description"
+            placeholder={t("enterDescription")}
           />
         </View>
         <View style={styles.buttonContainer}>
           <ProgiButton
             icon={null}
-            title={task ? "Update Task" : "Create Task"}
+            title={task ?  t("update")  : t("create") }
             onPress={task ? handleUpdateTask : handleCreateTask}
             style={{
               buttonStyle: {
@@ -270,7 +264,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
           />
           <View style={styles.buttonSpacer} />
           <ProgiButton
-            title={"Cancel"}
+            title={t("cancel")}
             onPress={handleCancel}
             icon={null}
             style={{

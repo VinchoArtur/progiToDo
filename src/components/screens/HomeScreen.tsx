@@ -1,5 +1,5 @@
 import React, { Dispatch, useEffect } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
 import { Task } from "../../redux/actions/types";
@@ -11,13 +11,14 @@ import ProgiButton from "../elements/buttons/ProgiButton";
 import { requestCalendarPermission, setTasks } from "../../redux/actions/todoActions";
 import { PERMISSIONS, request } from "react-native-permissions";
 import { loadTasksFromMemory } from "../../services/WriteReadService";
-import {styles} from "./styles/home-screen.style"
-import { components } from "@eva-design/eva/mapping";
+import { styles } from "./styles/home-screen.style";
+import { useTranslation } from "react-i18next";
 
 const HomeScreen: React.FC = () => {
   const dispatch: Dispatch<any> = useDispatch();
 
-  // @ts-ignore
+  const { t } = useTranslation();
+
   useEffect(() => {
     const fetchCalendarPermission = async () => {
       const permission = await request(PERMISSIONS.ANDROID.WRITE_CALENDAR);
@@ -55,12 +56,12 @@ const HomeScreen: React.FC = () => {
       {tasks.length === 0 ? (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.emptyStateText}>
-            Please create your first task.
+            {t("create_new_task")}
           </Text>
           <TouchableOpacity>
             <ProgiButton
               icon={"add-circle-outline"}
-              title={"Create task"}
+              title={t("create_task")}
               onPress={handleCreateTask}
               isDisabled={false}
               showTitle={false}
@@ -70,13 +71,13 @@ const HomeScreen: React.FC = () => {
                   buttonStyle: {
                     width: 70,
                     borderRadius: 92,
-                    backgroundColor: '#133b45',
+                    backgroundColor: "#133b45",
                     marginRight: 0,
                     paddingVertical: 0,
-                    paddingHorizontal: 0,
+                    paddingHorizontal: 0
                   },
                   textStyle: {
-                    textAlign: 'center'
+                    textAlign: "center"
                   }
                 }
               }
@@ -96,7 +97,7 @@ const HomeScreen: React.FC = () => {
             alignItems: "center",
             width: "100%",
             backgroundColor: "rgba(255,255,255,0.2)",
-            height: 55,
+            height: 55
           }}>
             <ProgiButton
               title={""}
@@ -110,13 +111,13 @@ const HomeScreen: React.FC = () => {
                   buttonStyle: {
                     width: 70,
                     borderRadius: 15,
-                    backgroundColor: '#133b45',
+                    backgroundColor: "#133b45",
                     marginRight: 0,
                     paddingVertical: 0,
-                    paddingHorizontal: 0,
+                    paddingHorizontal: 0
                   },
                   textStyle: {
-                    textAlign: 'center'
+                    textAlign: "center"
                   }
                 }
               }
@@ -127,7 +128,6 @@ const HomeScreen: React.FC = () => {
     </View>
   );
 };
-
 
 
 export default HomeScreen;

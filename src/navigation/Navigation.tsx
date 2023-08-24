@@ -21,3 +21,9 @@ export const useNavigateBack = () => {
     navigation.goBack();
   };
 };
+
+export const navigateToSettingsScreen = (taskId?: string) => {
+  if (navigator) {
+    navigator.navigate('Settings', {taskId});
+  }
+};

@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useState } from "react";
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator, TransitionPresets} from '@react-navigation/stack';
 import {setTopLevelNavigator} from './Navigation';
 import HomeScreen from '../components/screens/HomeScreen';
 import EditTaskScreen from '../components/screens/EditTaskScreen';
-import {BackHandler, Platform, StyleSheet} from 'react-native';
+import { BackHandler, Platform, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import LinearGradient from 'react-native-linear-gradient';
 import ProgiButton from '../components/elements/buttons/ProgiButton';
+import { Picker } from '@react-native-picker/picker';
+import i18n from "../localization/i18n"
+import { useTranslation } from "react-i18next";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const Stack = createStackNavigator();
 
@@ -19,6 +23,8 @@ const MyTheme = {
 };
 
 const Navigation: React.FC = () => {
+  const { t, i18n } = useTranslation();
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
   const handleExit = () => {
     // Код для выхода из приложения
     // В зависимости от платформы, вы можете использовать разные методы выхода
@@ -30,16 +36,29 @@ const Navigation: React.FC = () => {
       BackHandler.exitApp();
     }
   };
+  const handleLanguageChange = () => {
+    const newLanguage = selectedLanguage === 'en' ? 'ru' : 'en';
+    i18n.changeLanguage(newLanguage);
+    setSelectedLanguage(newLanguage);
+  };
 
   const headerOptions = {
     headerStyle: {
       backgroundColor: 'transparent',
     },
     headerTintColor: '#fff',
+    headerLeft: () => (
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <TouchableOpacity onPress={handleLanguageChange}>
+          <Icon name="language" size={30} color="#fff" />
+          <Text style={{ color: "#fff", fontSize: 18 }}>{selectedLanguage.toUpperCase()}</Text>
+        </TouchableOpacity>
+      </View>
+    ),
     headerRight: () => (
       <ProgiButton
         onPress={handleExit}
-        title={'Exit'}
+        title={t('exit')}
         isDisabled={false}
         icon={null}
       />
