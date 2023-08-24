@@ -17,5 +17,6 @@
   "update": "Update",
   "create": "Create",
   "cancel": "Cancel",
-  "exit": "Exit"
+  "exit": "Exit",
+  "reminderTime": "Notification time (in minutes)"
 }

@@ -6,7 +6,9 @@ export interface Task {
   dueDate: Date | string;
   description?: string;
   isClosest?: boolean;
-  notificationTime?: number
+  notificationTime?: number;
+  startReminder?: number;
+  endReminder?: number;
 }
 
 export type RootStackParamList = {
