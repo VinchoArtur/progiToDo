@@ -1,0 +1,21 @@
+{
+  "welcome": "Welcome to my app!",
+  "hello": "Hello!",
+  "greeting": "Hello, {{name}}!",
+  "create_new_task": "Please create your first task.",
+  "create_task": "Create task",
+  "title": "Title",
+  "task_duration": "Task duration",
+  "day": "Day",
+  "week": "Week",
+  "month": "Month",
+  "notificationTime": "Notification Time (minutes)",
+  "selectStart": "Select Start Due Date",
+  "selectDueDate": "Select Due Date",
+  "description": "Description",
+  "enterDescription": "Enter description",
+  "update": "Update",
+  "create": "Create",
+  "cancel": "Cancel",
+  "exit": "Exit"
+}
