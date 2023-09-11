@@ -5,15 +5,18 @@ import {
   SaveSingleTask,
   UpdateTaskBeforeSave,
 } from '../../utils/TaskWorker';
+import { nanoid } from "nanoid";
 
 interface TaskState {
   tasks: Task[];
+  taskGroups: [],
   calendarPermission: any;
 }
 
 const initialState: TaskState = {
   tasks: [],
   calendarPermission: null,
+  taskGroups: [],
 };
 
 const tasksReducer = (state = initialState, action: any) => {
@@ -40,6 +43,16 @@ const tasksReducer = (state = initialState, action: any) => {
       };
     case 'UPDATE_CALENDAR_PERMISSION':
       return {...state, calendarPermission: action.payload};
+    case 'CREATE_TASK_GROUP':
+      const newGroup = {
+        groupId: nanoid(),
+        groupName: action.payload,
+        tasks: [],
+      };
+      return {
+        ...state,
+        taskGroups: [...state.taskGroups, newGroup],
+      };
     default:
       return state;
   }
@@ -48,6 +61,7 @@ const tasksReducer = (state = initialState, action: any) => {
 const rootReducer = combineReducers({
   tasks: tasksReducer,
   calendarPermission: tasksReducer,
+  taskGroups: tasksReducer
 });
 
 export default rootReducer;

@@ -11,6 +11,7 @@ import { Picker } from '@react-native-picker/picker';
 import i18n from "../localization/i18n"
 import { useTranslation } from "react-i18next";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import GroupScreen from "../components/screens/GroupScreen";
 
 const Stack = createStackNavigator();
 
@@ -117,6 +118,15 @@ const Navigation: React.FC = () => {
           component={EditTaskScreen}
           options={{
             title: 'Edit Task',
+            ...headerOptions,
+          }}
+        />
+        <Stack.Screen
+          name="CreateGroup"
+          // @ts-ignore
+          component={GroupScreen}
+          options={{
+            title: 'Create group',
             ...headerOptions,
           }}
         />

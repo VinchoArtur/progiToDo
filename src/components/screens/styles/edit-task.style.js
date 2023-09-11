@@ -100,4 +100,12 @@ export const styles = StyleSheet.create({
   buttonSpacer: {
     width: 10,
   },
+  pickerComponent: {
+    color: '#ffffff',
+    display: "flex",
+    justifyContent: "center",
+    alignContent: "center",
+    borderWidth: 1,
+    borderColor: '#ffffff'
+  }
 });

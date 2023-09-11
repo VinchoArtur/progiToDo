@@ -14,6 +14,12 @@ export const navigateToEditScreen = (taskId?: string) => {
   }
 };
 
+export const navigateToCreateGroupScreen = () => {
+  if (navigator) {
+    navigator.navigate('CreateGroup');
+  }
+}
+
 export const useNavigateBack = () => {
   const navigation = useNavigation();
 
