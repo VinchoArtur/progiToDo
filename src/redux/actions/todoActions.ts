@@ -24,3 +24,8 @@ export const requestCalendarPermission = (permission: string) => ({
   type: 'UPDATE_CALENDAR_PERMISSION',
   payload: permission,
 });
+
+export const createTaskGroup = (groupName: string, tasks: Task[]) => ({
+  type: 'CREATE_TASK_GROUP',
+  payload: {groupName, tasks},
+});

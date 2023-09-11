@@ -41,6 +41,7 @@ const HomeScreen: React.FC = () => {
       console.log(result);
     });
   }, [dispatch]);
+  // @ts-ignore
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const handleCreateTask = () => {
     navigateToEditScreen(nanoid());

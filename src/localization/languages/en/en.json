@@ -18,5 +18,10 @@
   "create": "Create",
   "cancel": "Cancel",
   "exit": "Exit",
-  "reminderTime": "Notification time (in minutes)"
+  "reminderTime": "Notification time (in minutes)",
+  "enterGroupName": "Enter Group Name:",
+  "groupName": "Group Name",
+  "selectTasks": "Select tasks",
+  "search": "Search...",
+  "createGroup": "Create group"
 }

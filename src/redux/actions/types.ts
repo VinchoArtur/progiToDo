@@ -9,9 +9,18 @@ export interface Task {
   notificationTime?: number;
   startReminder?: number;
   endReminder?: number;
+  groupId?: string;
+  group?: TaskGroup;
+}
+
+export interface TaskGroup {
+  groupId: string;
+  groupName: string;
+  tasks: Task[]
 }
 
 export type RootStackParamList = {
   EditTask: {taskId: string};
+  CreateGroup: {};
   // Другие экраны и параметры
 };

@@ -3,11 +3,11 @@ import { ScrollView, Text, TextInput, View } from "react-native";
 import  Flexbox  from 'react-native-flexbox';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
-import { useNavigateBack } from "../../navigation/Navigation";
+import { navigateToCreateGroupScreen, navigateToEditScreen, useNavigateBack } from "../../navigation/Navigation";
 import { addTask, updateTask } from "../../redux/actions/todoActions";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
-import { RootStackParamList, Task } from "../../redux/actions/types";
+import { RootStackParamList, Task, TaskGroup } from "../../redux/actions/types";
 import ProgiButton from "../elements/buttons/ProgiButton";
 import { nanoid } from "nanoid";
 import { RESULTS } from "react-native-permissions";
@@ -37,7 +37,11 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     // @ts-ignore
     state.tasks.tasks.find(t => t.id === route.params.taskId)
   );
+  // @ts-ignore
+  const taskGroups = useSelector((state: RootState) => state.tasks.taskGroups);
+  const [newGroupId, setNewGroupId] = useState("");
   const permission = useSelector((state: RootState) => {
+    // @ts-ignore
     return state.calendarPermission.calendarPermission;
   });
   const dispatch = useDispatch();
@@ -207,6 +211,9 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
       console.log("Calendar permissions not granted");
     }
   };
+  const handleNavigateToCreateGroup = () => {
+    navigateToCreateGroupScreen();
+  };
   return (
     <ScrollView style={styles.scrollViewContainer}
                 contentContainerStyle={styles.scrollContentContainer}
@@ -223,6 +230,19 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             onChangeText={setNewTitle}
           />
         </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>{t('group')}</Text>
+          <Picker
+            style={styles.pickerComponent}
+            selectedValue={newGroupId}
+            onValueChange={(itemValue) => setNewGroupId(itemValue)}
+          >
+            {taskGroups.map((group: TaskGroup) => (
+              <Picker.Item label={group.groupName} value={group.groupId} key={group.groupId} />
+            ))}
+          </Picker>
+        </View>
+        <ProgiButton title={t('createGroup')} onPress={handleNavigateToCreateGroup}></ProgiButton>
         <CalendarSyncScreen />
         <Text style={{color: 'white', textAlign: 'right', width: '100%', marginRight: 20, marginBottom: 10}}>{t('reminderTime')}</Text>
 

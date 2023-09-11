@@ -10,14 +10,7 @@ import RNCalendarEvents from "react-native-calendar-events";
 import ProgiButton from "../elements/buttons/ProgiButton";
 import { deleteCalendarEvent, requestCalendarPermissions } from "../../services/Calendar.service";
 
-const useTaskItem = (item: Task) => {
-  const [progress, setProgress] = useState(0);
-
-  return progress;
-};
-
 const TaskItem: React.FC<{ item: Task }> = ({ item }) => {
-  const progress = useTaskItem(item);
   const dispatch = useDispatch();
   const slideAnimation = useRef(new Animated.Value(0)).current;
 
