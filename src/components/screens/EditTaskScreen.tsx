@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
-import  Flexbox  from 'react-native-flexbox';
+import Flexbox from "react-native-flexbox";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store/store";
-import { navigateToCreateGroupScreen, navigateToEditScreen, useNavigateBack } from "../../navigation/Navigation";
+import { navigateToCreateGroupScreen, useNavigateBack } from "../../navigation/Navigation";
 import { addTask, updateTask } from "../../redux/actions/todoActions";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
@@ -15,11 +15,10 @@ import RNCalendarEvents from "react-native-calendar-events";
 import CalendarSyncScreen from "../elements/calendar/CalendarSync";
 import { Picker } from "@react-native-picker/picker";
 import { addDays, addMonths } from "date-fns";
-import { createCalendarEvent, deleteCalendarEvent } from "../../services/Calendar.service";
+import { createCalendarEvent } from "../../services/Calendar.service";
 import { styles } from "./styles/edit-task.style";
 import DatePicker from "../elements/input/DatePicker";
 import { useTranslation } from "react-i18next";
-import i18n from "../../localization/i18n"
 
 type EditTaskScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "EditTask">;
@@ -68,9 +67,6 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
   const [taskDuration, setTaskDuration] = useState<"day" | "week" | "month">(
     "day"
   );
-  const handleTaskDurationChange = (value: "day" | "week" | "month") => {
-    setTaskDuration(value);
-  };
 
   const calculateDueDate = (duration: "day" | "week" | "month"): Date => {
     const currentDate = new Date();
@@ -167,9 +163,6 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     }
     setNewDueDate(newDate);
   };
-  const handleNotificationTimeChange = (value: number) => {
-    setNotificationTime(value);
-  };
   const updateCalendarEvent = async (
     title: string,
     startDate: Date,
@@ -212,6 +205,7 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
     }
   };
   const handleNavigateToCreateGroup = () => {
+    console.log("Create group button clicked");
     navigateToCreateGroupScreen();
   };
   return (
@@ -230,21 +224,14 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             onChangeText={setNewTitle}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <Text style={styles.inputLabel}>{t('group')}</Text>
-          <Picker
-            style={styles.pickerComponent}
-            selectedValue={newGroupId}
-            onValueChange={(itemValue) => setNewGroupId(itemValue)}
-          >
-            {taskGroups.map((group: TaskGroup) => (
-              <Picker.Item label={group.groupName} value={group.groupId} key={group.groupId} />
-            ))}
-          </Picker>
-        </View>
-        <ProgiButton title={t('createGroup')} onPress={handleNavigateToCreateGroup}></ProgiButton>
         <CalendarSyncScreen />
-        <Text style={{color: 'white', textAlign: 'right', width: '100%', marginRight: 20, marginBottom: 10}}>{t('reminderTime')}</Text>
+        <Text style={{
+          color: "white",
+          textAlign: "right",
+          width: "100%",
+          marginRight: 20,
+          marginBottom: 10
+        }}>{t("reminderTime")}</Text>
 
         <Flexbox style={styles.dateInputContainer}>
           {/*Select start due date*/}
@@ -290,10 +277,34 @@ const EditTaskScreen: React.FC<EditTaskScreenProps> = ({
             placeholder={t("enterDescription")}
           />
         </View>
+        <View style={styles.inputContainer}>
+          <Text style={styles.inputLabel}>{t("group")}</Text>
+          <View style={{
+            borderWidth: 1,
+            borderColor: "gray"
+          }}>
+            <Picker
+              style={styles.pickerComponent}
+              placeholder={t('selectGroup')}
+              dropdownIconColor={"white"}
+              selectedValue={newGroupId}
+              onValueChange={(itemValue) => {
+                setNewGroupId(itemValue);
+              }}
+            >
+              {taskGroups.map((group: TaskGroup) => (
+                <Picker.Item label={group.groupName} value={group.groupId} key={group.groupId}  />
+              ))}
+            </Picker>
+          </View>
+        </View>
+        <ProgiButton title={t("createGroup")} onPress={handleNavigateToCreateGroup}></ProgiButton>
+
+
+        {/*Buttons container*/}
         <View style={styles.buttonContainer}>
           <ProgiButton
-            icon={null}
-            title={task ?  t("update")  : t("create") }
+            title={task ? t("update") : t("create")}
             onPress={task ? handleUpdateTask : handleCreateTask}
             style={{
               buttonStyle: {

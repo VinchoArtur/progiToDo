@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import React, { useState } from "react";
-import { ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useNavigateBack } from "../../navigation/Navigation";
 import { createTaskGroup } from "../../redux/actions/todoActions";
 import { StackNavigationProp } from "@react-navigation/stack";
@@ -12,6 +12,7 @@ import { MultiSelect } from "react-native-element-dropdown";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import ProgiButton from "../elements/buttons/ProgiButton";
 import { useTranslation } from "react-i18next";
+import { ReceiveTasksByName } from "../../utils/Utils";
 
 type CreateGroupScreenProps = {
   navigation: StackNavigationProp<RootStackParamList, "CreateGroup">;
@@ -30,9 +31,8 @@ const GroupScreen: React.FC<CreateGroupScreenProps> = (navigation,
 
   const handleCreateGroup = () => {
     if (groupName.trim() !== "") {
-      // @ts-ignore
-      dispatch(createTaskGroup(groupName, selectedTasks)); // Вызываем действие для создания группы
-      useNavigateBack();
+      dispatch(createTaskGroup(groupName, ReceiveTasksByName(selectedTasks, tasks)));
+      navigateBack();
     }
   };
 
@@ -55,12 +55,13 @@ const GroupScreen: React.FC<CreateGroupScreenProps> = (navigation,
                 keyboardShouldPersistTaps="handled"
     >
       <View style={styles.container}>
-        <Text>{t('enterGroupName')}</Text>
+        <View style={{width: '100%'}}>
+          <Text style={{color: '#ffffff', position: 'relative', left: '3%', marginBottom: 5 }}>{t('enterGroupName')}</Text>
+        </View>
         <TextInput
           style={styles.input}
           value={groupName}
           onChangeText={setGroupName}
-          placeholder={t('groupName')}
         />
         <MultiSelect
           style={styles.dropdown}
@@ -80,7 +81,7 @@ const GroupScreen: React.FC<CreateGroupScreenProps> = (navigation,
           }}
           renderItem={renderDataItem}
           renderSelectedItem={(item, unSelect) => (
-            <TouchableOpacity onPress={() => unSelect && unSelect(item)}>
+            <TouchableOpacity key={item.id} onPress={() => unSelect && unSelect(item)}>
               <View style={styles.selectedStyle}>
                 <Text style={styles.textSelectedStyle}>{item.title}</Text>
                 <Icon color="rgba(227,18,18,0.75)" name="delete" size={17} />
@@ -93,7 +94,7 @@ const GroupScreen: React.FC<CreateGroupScreenProps> = (navigation,
           <ProgiButton
             icon={null}
             title={t('createGroup')} onPress={handleCreateGroup}
-            isDisabled={!!groupName}
+            isDisabled={!groupName}
             style={{
               buttonStyle: {
                 backgroundColor: "rgba(23,211,98,0.24)"

@@ -23,5 +23,9 @@
   "groupName": "Group Name",
   "selectTasks": "Select tasks",
   "search": "Search...",
-  "createGroup": "Create group"
+  "createGroup": "Create group",
+  "group": "Group",
+  "selectGroup": "Select group",
+  "home": "Home",
+  "work": "Work"
 }
