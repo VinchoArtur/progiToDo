@@ -23,5 +23,9 @@
   "groupName": "Название группы",
   "selectTasks": "Выберите задачи",
   "search": "Поиск...",
-  "createGroup": "Создать группу"
+  "createGroup": "Создать группу",
+  "group": "Группа",
+  "selectGroup": "Выберите группу",
+  "home": "Дом",
+  "work": "Работа"
 }
